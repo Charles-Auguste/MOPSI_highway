@@ -183,7 +183,7 @@ class RacetrackEnv(AbstractEnv):
         # Controlled vehicles
         self.controlled_vehicles = []
         for i in range(self.config["controlled_vehicles"]):
-            lane_index = ("a", "b", rng.randint(2)) if i == 0 else \
+            lane_index = ("ENPC", "ESIEE", rng.randint(2)) if i == 0 else \
                 self.road.network.random_lane_index(rng)
             controlled_vehicle = self.action_type.vehicle_class.make_on_lane(self.road, lane_index, speed=None,
                                                                              longitudinal=rng.uniform(20, 50))

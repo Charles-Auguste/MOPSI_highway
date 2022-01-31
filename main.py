@@ -2,12 +2,18 @@ import gym
 import highway_env
 from matplotlib import pyplot as plt
 
-env = gym.make('highway-v0')
+env = gym.make('mopsi-env-v0')
 env.reset()
-for _ in range(3):
-    action = env.action_type.actions_indexes["IDLE"]
-    obs, reward, done, info = env.step(action)
+
+while True:
     env.render()
 
-plt.imshow(env.render(mode="rgb_array"))
-plt.show()
+
+
+
+# for _ in range(150):
+#     action = env.action_type.actions_all["IDLE"]
+#     obs, reward, done, info = env.step(action)
+#     env.render()
+
+# plt.imshow(env.render(mode="rgb_array"))
