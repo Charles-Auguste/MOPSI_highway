@@ -32,8 +32,8 @@ class RacetrackEnv(AbstractEnv):
                 "features": ['presence', 'on_road'],
                 "grid_size": [[-18, 18], [-18, 18]],
                 "grid_step": [3, 3],
-                "as_image": False,
-                "align_to_vehicle_axes": True
+                "as_image": True,
+                "align_to_vehicle_axes": False
             },
             "action": {
                 "type": "ContinuousAction",
@@ -49,8 +49,8 @@ class RacetrackEnv(AbstractEnv):
             "action_reward": -0.3,
             "controlled_vehicles": 1,
             "other_vehicles": 1,
-            "screen_width": 600,
-            "screen_height": 600,
+            "screen_width": 1000,
+            "screen_height": 1000,
             "centering_position": [0.5, 0.5],
         })
         return config
@@ -183,7 +183,7 @@ class RacetrackEnv(AbstractEnv):
         # Controlled vehicles
         self.controlled_vehicles = []
         for i in range(self.config["controlled_vehicles"]):
-            lane_index = ("ENPC", "ESIEE", rng.randint(2)) if i == 0 else \
+            lane_index = ("a", "b", rng.randint(2)) if i == 0 else \
                 self.road.network.random_lane_index(rng)
             controlled_vehicle = self.action_type.vehicle_class.make_on_lane(self.road, lane_index, speed=None,
                                                                              longitudinal=rng.uniform(20, 50))
