@@ -7,6 +7,7 @@ env = gym.make('mopsi-env-v0')
 
 for i in range (1,7):
     env.config["number_of_lane"] = i
+    env.config["other_vehicles"] = 10
     env.reset()
     env.render()
     t.sleep(2)

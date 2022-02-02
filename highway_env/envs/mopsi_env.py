@@ -9,6 +9,7 @@ from highway_env.envs.common.abstract import AbstractEnv
 from highway_env.road.lane import LineType, StraightLane, CircularLane, SineLane
 from highway_env.road.road import Road, RoadNetwork
 from highway_env.vehicle.behavior import IDMVehicle
+# import highway_env.vehicle.kinematics
 
 
 class MopsiEnv(AbstractEnv):
@@ -212,7 +213,7 @@ class MopsiEnv(AbstractEnv):
 
     def _make_vehicles(self) -> None:
         """
-        Populate a road with several vehicles on the highway and on the merging lane, as well as an ego-vehicle.
+        Populate the road with one controlled vehicle and only IDM vehicles driving on a single lane.
         """
         rng = self.np_random
         nb_lane = self.config["number_of_lane"]
@@ -229,29 +230,27 @@ class MopsiEnv(AbstractEnv):
             self.road.vehicles.append(controlled_vehicle)
 
         # Front vehicle
-        vehicle = IDMVehicle.make_on_lane(self.road, ("ESIEE", "TV", lane_index[-1]),
-                                          longitudinal=rng.uniform(
-                                              low=0,
-                                              high=self.road.network.get_lane(("ESIEE", "TV", 0)).length
-                                          ),
-                                          speed=6+rng.uniform(high=3))
-        self.road.vehicles.append(vehicle)
+        init_vehicle_dist = 10
+        for lane_index in range(nb_lane) :
+            vehicle_nb = 0
+            enough_space = True
+            while ( (vehicle_nb < self.config["other_vehicles"]) and (enough_space) ) :
+                current_lane = ("BOISDELET", "BOULANGERIE", lane_index)
+                vehicle = IDMVehicle.make_on_lane(self.road, current_lane,
+                                                  longitudinal= 0. + vehicle_nb*init_vehicle_dist,
+                                                  speed = 5)
 
-        # Other vehicles
-        for i in range(rng.randint(self.config["other_vehicles"])):
-            random_lane_index = self.road.network.random_lane_index(rng)
-            vehicle = IDMVehicle.make_on_lane(self.road, random_lane_index,
-                                              longitudinal=rng.uniform(
-                                                  low=0,
-                                                  high=self.road.network.get_lane(random_lane_index).length
-                                              ),
-                                              speed=6+rng.uniform(high=3))
-            # Prevent early collisions
-            for v in self.road.vehicles:
-                if np.linalg.norm(vehicle.position - v.position) < 20:
-                    break
-            else:
-                self.road.vehicles.append(vehicle)
+                # Check whether we can add the new vehicle
+                end_of_the_lane = vehicle_nb*init_vehicle_dist + vehicle.LENGTH > self.road.network.get_lane(current_lane).length
+                if (end_of_the_lane) :
+                    enough_space = False
+                else :
+                    vehicle_nb+=1
+                    self.road.vehicles.append(vehicle)
+
+
+
+
 
 
 
