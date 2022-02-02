@@ -46,7 +46,7 @@ class MopsiEnv(AbstractEnv):
             "other_vehicles": 20,
             "screen_width": 1500,
             "screen_height": 1000,
-            "centering_position": [0.5, 0.6],
+            "centering_position": [0.6, 0.6],
         })
         return config
 
@@ -218,35 +218,46 @@ class MopsiEnv(AbstractEnv):
         rng = self.np_random
         nb_lane = self.config["number_of_lane"]
 
-        # Controlled vehicles
+        # ==============================================================================================================
+        #1 Controlled vehicles
+
         self.controlled_vehicles = []
         for i in range(self.config["controlled_vehicles"]):
             lane_index = ("ENPC", "ESIEE", rng.randint(1)) if i == 0 else \
                 self.road.network.random_lane_index(rng)
             controlled_vehicle = self.action_type.vehicle_class.make_on_lane(self.road, lane_index, speed=None,
-                                                                             longitudinal=rng.uniform(20, 50))
-
+                                                                             longitudinal=self.road.network.get_lane\
+                                                                             (lane_index).length - 5)
             self.controlled_vehicles.append(controlled_vehicle)
             self.road.vehicles.append(controlled_vehicle)
 
-        # Front vehicle
+
+        # ==============================================================================================================
+        #2 Front vehicles
+
+        list_of_nodes = ["BOISDELET", "BOULANGERIE", "RER", "ENPC"]
         init_vehicle_dist = 10
         for lane_index in range(nb_lane) :
             vehicle_nb = 0
-            enough_space = True
-            while ( (vehicle_nb < self.config["other_vehicles"]) and (enough_space) ) :
-                current_lane = ("BOISDELET", "BOULANGERIE", lane_index)
-                vehicle = IDMVehicle.make_on_lane(self.road, current_lane,
-                                                  longitudinal= 0. + vehicle_nb*init_vehicle_dist,
-                                                  speed = 5)
+            for filled_street in range(0,4) :
+                vehicle_on_street = 0
+                enough_space = True
+                while ( (vehicle_nb < self.config["other_vehicles"]) and (enough_space) ) :
+                    current_lane = (list_of_nodes[filled_street], list_of_nodes[filled_street+1], lane_index)
+                    vehicle = IDMVehicle.make_on_lane(self.road, current_lane,
+                                                      longitudinal= 0. + vehicle_on_street*init_vehicle_dist,
+                                                      speed = 5)
 
-                # Check whether we can add the new vehicle
-                end_of_the_lane = vehicle_nb*init_vehicle_dist + vehicle.LENGTH > self.road.network.get_lane(current_lane).length
-                if (end_of_the_lane) :
-                    enough_space = False
-                else :
-                    vehicle_nb+=1
-                    self.road.vehicles.append(vehicle)
+                    # Check whether we can add the new vehicle
+                    end_of_the_lane = vehicle_on_street*init_vehicle_dist + vehicle.LENGTH > \
+                                      self.road.network.get_lane(current_lane).length
+                    if (end_of_the_lane) :
+                        enough_space = False
+                    else :
+                        vehicle_on_street+=1
+                        vehicle_nb+=1
+                        self.road.vehicles.append(vehicle)
+
 
 
 

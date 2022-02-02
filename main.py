@@ -5,9 +5,16 @@ import time as t
 
 env = gym.make('mopsi-env-v0')
 
+# ATTENTION
+############
+
+# Pas mettre plus de 20 voitures
+# Se corrige tres facilement mais autre petit bug a corriger avant
+
+
 for i in range (1,7):
     env.config["number_of_lane"] = i
-    env.config["other_vehicles"] = 10
+    env.config["other_vehicles"] = 20
     env.reset()
     env.render()
     t.sleep(2)
