@@ -37,7 +37,7 @@ class MopsiEnv(AbstractEnv):
             "simulation_frequency": 15,
             "policy_frequency": 5,
             "duration": 300,
-            "number_of_lane" : 2,
+            "number_of_lane" : 3,
             "collision_reward": -1,
             "lane_centering_cost": 4,
             "action_reward": -0.3,
@@ -45,7 +45,7 @@ class MopsiEnv(AbstractEnv):
             "other_vehicles": 20,
             "screen_width": 1500,
             "screen_height": 1000,
-            "centering_position": [0.5, 0.5],
+            "centering_position": [0.5, 0.6],
         })
         return config
 
@@ -78,27 +78,27 @@ class MopsiEnv(AbstractEnv):
         #===============================================================================================================
         # Straight Lane #1
         if nb_lane == 1:
-            lane1 = StraightLane([0, 0], [100, 0], line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS), width=5,
+            lane1 = StraightLane([-50, 30], [50, 30], line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS), width=5,
                                  speed_limit=speedlimits[1])
             self.lane1 = lane1
             net.add_lane("ENPC", "ESIEE", lane1)
         else :
-            lane1 = StraightLane([0, 0], [100, 0], line_types=(LineType.CONTINUOUS, LineType.STRIPED), width=5,
+            lane1 = StraightLane([-50, 30], [50, 30], line_types=(LineType.CONTINUOUS, LineType.STRIPED), width=5,
                                  speed_limit=speedlimits[1])
             self.lane1 = lane1
             net.add_lane("ENPC", "ESIEE", lane1)
             for i in range(nb_lane-2):
                 net.add_lane("ENPC", "ESIEE",
-                             StraightLane([0, 5 * (i + 1)], [100, 5 * (i + 1)],
+                             StraightLane([-50, 30 + 5 * (i + 1)], [50, 30 + 5 * (i + 1)],
                                           line_types=(LineType.STRIPED, LineType.STRIPED), width=5,
                                           speed_limit=speedlimits[1]))
             net.add_lane("ENPC", "ESIEE",
-                         StraightLane([0, 5 * (nb_lane-1)], [100, 5 * (nb_lane-1)],
+                         StraightLane([-50, 30 + 5 * (nb_lane-1)], [50, 30 + 5 * (nb_lane-1)],
                                       line_types=(LineType.STRIPED, LineType.CONTINUOUS), width=5,
                                       speed_limit=speedlimits[1]))
         # ===============================================================================================================
         # 2 - Circular Arc #1
-        center1 = [100, -30]
+        center1 = [50, 0]
         radii1 = 30
         if nb_lane == 1:
             net.add_lane("ESIEE", "TV",
@@ -143,25 +143,25 @@ class MopsiEnv(AbstractEnv):
         # 4 - Straight Line #2
         if nb_lane == 1:
             net.add_lane("BOISDELET", "BOULANGERIE",
-                         StraightLane([100, -60], [0, -60], line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS), width=5,
+                         StraightLane([50, -30], [-50, -30], line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS), width=5,
                                       speed_limit=speedlimits[4]))
         else :
             net.add_lane("BOISDELET", "BOULANGERIE",
-                         StraightLane([100, -60], [0, -60], line_types=(LineType.CONTINUOUS, LineType.NONE),
+                         StraightLane([50, -30], [-50, -30], line_types=(LineType.CONTINUOUS, LineType.NONE),
                                       width=5,
                                       speed_limit=speedlimits[4]))
             for i in range(nb_lane - 2):
                 net.add_lane("BOISDELET", "BOULANGERIE",
-                             StraightLane([100, -60 - 5*(i+1)], [0, -60 - 5*(i+1)], line_types=(LineType.STRIPED, LineType.NONE),
+                             StraightLane([50, -30 - 5*(i+1)], [-50, -30 - 5*(i+1)], line_types=(LineType.STRIPED, LineType.NONE),
                                           width=5,
                                           speed_limit=speedlimits[4]))
             net.add_lane("BOISDELET", "BOULANGERIE",
-                         StraightLane([100, -60 - 5*(nb_lane - 1)], [0, -60 - 5*(nb_lane - 1)], line_types=(LineType.STRIPED, LineType.CONTINUOUS), width=5,
+                         StraightLane([50, -30 - 5*(nb_lane - 1)], [-50, -30 - 5*(nb_lane - 1)], line_types=(LineType.STRIPED, LineType.CONTINUOUS), width=5,
                                       speed_limit=speedlimits[4]))
 
         # ===============================================================================================================
         # 5 - Circular Arc #3
-        center3 = [0, -30]
+        center3 = [-50, 0]
         radii3 = 30
         if nb_lane == 1 :
             net.add_lane("BOULANGERIE", "RER",
