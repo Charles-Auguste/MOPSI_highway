@@ -12,20 +12,17 @@ env = gym.make('mopsi-env-v0')
 # Se corrige tres facilement mais autre petit bug a corriger avant
 
 
-for i in range (1,7):
-    env.config["number_of_lane"] = i
-    env.config["other_vehicles"] = 20
-    env.reset()
+env.config["number_of_lane"] = 2
+env.config["other_vehicles"] = 30
+env.config["controlled_vehicles"] = 1
+env.reset()
+
+
+
+for _ in range(1000):
+    obs, reward, done, info = env.step([0,0])
+    print("reward : ",reward)
     env.render()
-    t.sleep(2)
 
-
-
-
-#for _ in range(150):
-    #action = env.action_type.actions_all["IDLE"]
-    #obs, reward, done, info = env.step(action)
-    #env.render()
-
-#plt.imshow(env.render(mode="rgb_array"))
+plt.imshow(env.render(mode="rgb_array"))
 

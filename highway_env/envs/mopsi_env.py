@@ -11,7 +11,6 @@ from highway_env.road.road import Road, RoadNetwork
 from highway_env.vehicle.behavior import IDMVehicle
 # import highway_env.vehicle.kinematics
 
-
 class MopsiEnv(AbstractEnv):
     """
     Our own environment, built from the racetrack_env.
@@ -31,7 +30,7 @@ class MopsiEnv(AbstractEnv):
             },
             "action": {
                 "type": "ContinuousAction",
-                "longitudinal": False,
+                "longitudinal": True,
                 "lateral": True,
                 "target_speeds": [0, 5, 10]
             },
@@ -46,7 +45,7 @@ class MopsiEnv(AbstractEnv):
             "other_vehicles": 20,
             "screen_width": 1500,
             "screen_height": 1000,
-            "centering_position": [0.6, 0.6],
+            "centering_position": [0.8, 0.3],
         })
         return config
 
@@ -74,7 +73,7 @@ class MopsiEnv(AbstractEnv):
         net = RoadNetwork()
 
         # Set Speed Limits for Road Sections - Straight, Turn20, Straight, Turn 15, Turn15, Straight, Turn25x2, Turn18
-        speedlimits = [None, 10, 10, 10, 10, 10, 10]
+        speedlimits = [None, 20, 20, 20, 20, 20, 20]
 
         #===============================================================================================================
         # Straight Lane #1
@@ -190,22 +189,22 @@ class MopsiEnv(AbstractEnv):
         radii4 = radii3
         if nb_lane == 1 :
             net.add_lane("RER", "ENPC",
-                         CircularLane(center4, radii4 , np.deg2rad(90), np.deg2rad(180), width=5,
-                                      clockwise=True, line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS),
+                         CircularLane(center4, radii4 , np.deg2rad(180), np.deg2rad(90), width=5,
+                                      clockwise=False, line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS),
                                       speed_limit=speedlimits[6]))
         else:
             net.add_lane("RER", "ENPC",
-                         CircularLane(center4, radii4 , np.deg2rad(90), np.deg2rad(180), width=5,
-                                      clockwise=True, line_types=(LineType.NONE, LineType.CONTINUOUS),
+                         CircularLane(center4, radii4 , np.deg2rad(180), np.deg2rad(90), width=5,
+                                      clockwise=False, line_types=(LineType.STRIPED, LineType.NONE),
                                       speed_limit=speedlimits[6]))
             for i in range (nb_lane - 2):
                 net.add_lane("RER", "ENPC",
-                             CircularLane(center4, radii4 + 5*(i+1), np.deg2rad(90), np.deg2rad(180), width=5,
-                                          clockwise=True, line_types=(LineType.NONE, LineType.STRIPED),
+                             CircularLane(center4, radii4 + 5*(i+1), np.deg2rad(180), np.deg2rad(90), width=5,
+                                          clockwise=False, line_types=(LineType.STRIPED, LineType.NONE),
                                           speed_limit=speedlimits[6]))
             net.add_lane("RER", "ENPC",
-                         CircularLane(center4, radii4 + 5 * (nb_lane - 1), np.deg2rad(90), np.deg2rad(180), width=5,
-                                      clockwise=True, line_types=(LineType.CONTINUOUS, LineType.STRIPED),
+                         CircularLane(center4, radii4 + 5 * (nb_lane - 1), np.deg2rad(180), np.deg2rad(90), width=5,
+                                      clockwise=False, line_types=(LineType.STRIPED, LineType.CONTINUOUS),
                                       speed_limit=speedlimits[6]))
         # ===============================================================================================================
         road = Road(network=net, np_random=self.np_random, record_history=self.config["show_trajectories"])
@@ -223,9 +222,9 @@ class MopsiEnv(AbstractEnv):
 
         self.controlled_vehicles = []
         for i in range(self.config["controlled_vehicles"]):
-            lane_index = ("ENPC", "ESIEE", rng.randint(1)) if i == 0 else \
+            lane_index = ("TV", "BOISDELET", rng.randint(nb_lane)) if i == 0 else \
                 self.road.network.random_lane_index(rng)
-            controlled_vehicle = self.action_type.vehicle_class.make_on_lane(self.road, lane_index, speed=None,
+            controlled_vehicle = self.action_type.vehicle_class.make_on_lane(self.road, lane_index, speed=0,
                                                                              longitudinal=self.road.network.get_lane\
                                                                              (lane_index).length - 5)
             self.controlled_vehicles.append(controlled_vehicle)
@@ -235,11 +234,11 @@ class MopsiEnv(AbstractEnv):
         # ==============================================================================================================
         #2 Front vehicles
 
-        list_of_nodes = ["BOISDELET", "BOULANGERIE", "RER", "ENPC"]
+        list_of_nodes = ["BOISDELET", "BOULANGERIE", "RER", "ENPC", "ESIEE", "TV"]
         init_vehicle_dist = 10
         for lane_index in range(nb_lane) :
             vehicle_nb = 0
-            for filled_street in range(0,4) :
+            for filled_street in range(0,5) :
                 vehicle_on_street = 0
                 enough_space = True
                 while ( (vehicle_nb < self.config["other_vehicles"]) and (enough_space) ) :
@@ -257,13 +256,6 @@ class MopsiEnv(AbstractEnv):
                         vehicle_on_street+=1
                         vehicle_nb+=1
                         self.road.vehicles.append(vehicle)
-
-
-
-
-
-
-
 
 register(
     id='mopsi-env-v0',
