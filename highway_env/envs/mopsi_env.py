@@ -11,6 +11,23 @@ from highway_env.road.road import Road, RoadNetwork
 from highway_env.vehicle.behavior import IDMVehicle
 # import highway_env.vehicle.kinematics
 
+import copy
+import os
+from typing import List, Tuple, Optional, Callable
+import gym
+from gym import Wrapper
+from gym.utils import seeding
+import numpy as np
+
+from highway_env import utils
+from highway_env.envs.common.action import action_factory, Action, DiscreteMetaAction, ActionType
+from highway_env.envs.common.observation import observation_factory, ObservationType
+from highway_env.envs.common.finite_mdp import finite_mdp
+from highway_env.envs.common.graphics import EnvViewer
+from highway_env.vehicle.behavior import IDMVehicle, LinearVehicle
+from highway_env.vehicle.controller import MDPVehicle
+from highway_env.vehicle.kinematics import Vehicle
+
 class MopsiEnv(AbstractEnv):
     """
     Our own environment, built from the racetrack_env.
@@ -45,7 +62,7 @@ class MopsiEnv(AbstractEnv):
             "other_vehicles": 20,
             "screen_width": 1500,
             "screen_height": 1000,
-            "centering_position": [0.8, 0.3],
+            "centering_position": [0.5, 0.5],
         })
         return config
 
@@ -73,7 +90,7 @@ class MopsiEnv(AbstractEnv):
         net = RoadNetwork()
 
         # Set Speed Limits for Road Sections - Straight, Turn20, Straight, Turn 15, Turn15, Straight, Turn25x2, Turn18
-        speedlimits = [None, 20, 20, 20, 20, 20, 20]
+        speedlimits = [None, 10, 10, 10, 10, 10, 10]
 
         #===============================================================================================================
         # Straight Lane #1
@@ -235,7 +252,7 @@ class MopsiEnv(AbstractEnv):
         #2 Front vehicles
 
         list_of_nodes = ["BOISDELET", "BOULANGERIE", "RER", "ENPC", "ESIEE", "TV"]
-        init_vehicle_dist = 10
+        init_vehicle_dist = 15
         for lane_index in range(nb_lane) :
             vehicle_nb = 0
             for filled_street in range(0,5) :
@@ -256,6 +273,30 @@ class MopsiEnv(AbstractEnv):
                         vehicle_on_street+=1
                         vehicle_nb+=1
                         self.road.vehicles.append(vehicle)
+
+
+
+    def render(self, mode: str = 'human') -> Optional[np.ndarray]:
+        """
+        Render the environment.
+
+        Create a viewer if none exists, and use it to render an image.
+        :param mode: the rendering mode
+        """
+        self.rendering_mode = mode
+
+        if self.viewer is None:
+            self.viewer = EnvViewer(self)
+
+        self.enable_auto_render = True
+
+        self.viewer.display(fixed = True)
+
+        if not self.viewer.offscreen:
+            self.viewer.handle_events()
+        if mode == 'rgb_array':
+            image = self.viewer.get_image()
+            return image
 
 register(
     id='mopsi-env-v0',

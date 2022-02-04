@@ -90,12 +90,15 @@ class EnvViewer(object):
             if self.env.action_type:
                 EventHandler.handle_event(self.env.action_type, event)
 
-    def display(self) -> None:
+    def display(self, fixed = False) -> None:
         """Display the road and vehicles on a pygame window."""
         if not self.enabled:
             return
 
-        self.sim_surface.move_display_window_to(self.window_position())
+        if not fixed:
+            self.sim_surface.move_display_window_to(self.window_position())
+        if fixed:
+            self.sim_surface.move_display_window_to(np.array([0,0]))
         RoadGraphics.display(self.env.road, self.sim_surface)
 
         if self.vehicle_trajectory:
