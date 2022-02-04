@@ -26,7 +26,7 @@ class MopsiEnv(AbstractEnv):
                 "grid_size": [[-65, 65], [-65, 65]],
                 "grid_step": [3, 3],
                 "as_image": False,
-                "align_to_vehicle_axes": True
+                "align_to_vehicle_axes": False
             },
             "action": {
                 "type": "ContinuousAction",
@@ -224,9 +224,9 @@ class MopsiEnv(AbstractEnv):
         for i in range(self.config["controlled_vehicles"]):
             lane_index = ("TV", "BOISDELET", rng.randint(nb_lane)) if i == 0 else \
                 self.road.network.random_lane_index(rng)
-            controlled_vehicle = self.action_type.vehicle_class.make_on_lane(self.road, lane_index, speed=0,
-                                                                             longitudinal=self.road.network.get_lane\
-                                                                             (lane_index).length - 5)
+            controlled_vehicle = IDMVehicle.make_on_lane(self.road, lane_index,
+                                                      longitudinal= 0. + self.road.network.get_lane(lane_index).length // 2,
+                                                      speed = 5)
             self.controlled_vehicles.append(controlled_vehicle)
             self.road.vehicles.append(controlled_vehicle)
 

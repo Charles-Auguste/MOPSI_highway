@@ -12,8 +12,8 @@ env = gym.make('mopsi-env-v0')
 # Se corrige tres facilement mais autre petit bug a corriger avant
 
 
-env.config["number_of_lane"] = 2
-env.config["other_vehicles"] = 30
+env.config["number_of_lane"] = 1
+env.config["other_vehicles"] = 20
 env.config["controlled_vehicles"] = 1
 env.reset()
 
