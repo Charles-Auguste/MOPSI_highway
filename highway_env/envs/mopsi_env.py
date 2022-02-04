@@ -53,7 +53,7 @@ class MopsiEnv(AbstractEnv):
             },
             "simulation_frequency": 15,
             "policy_frequency": 5,
-            "duration": 300,
+            "duration": 1000,
             "number_of_lane" : 3,
             "collision_reward": -1,
             "lane_centering_cost": 4,
@@ -65,6 +65,8 @@ class MopsiEnv(AbstractEnv):
             "centering_position": [0.5, 0.5],
         })
         return config
+
+
 
     def _reward(self, action: np.ndarray) -> float:
         _, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
@@ -275,7 +277,6 @@ class MopsiEnv(AbstractEnv):
                         self.road.vehicles.append(vehicle)
 
 
-
     def render(self, mode: str = 'human') -> Optional[np.ndarray]:
         """
         Render the environment.
@@ -297,6 +298,24 @@ class MopsiEnv(AbstractEnv):
         if mode == 'rgb_array':
             image = self.viewer.get_image()
             return image
+
+
+    def get_speeds(self) -> np.ndarray :
+        """"
+        Returns the list of the vehicle speeds present in the road.
+
+        :return: speeds_list is an array containing the speeds
+        """
+        vehicle_number = len(self.road.vehicles)
+        speeds_list = np.zeros((vehicle_number))
+        for (i, vehicle) in enumerate(self.road.vehicles) :
+            speeds_list[i] = vehicle.speed
+        return speeds_list
+
+
+
+
+
 
 register(
     id='mopsi-env-v0',
