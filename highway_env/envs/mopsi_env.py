@@ -312,6 +312,18 @@ class MopsiEnv(AbstractEnv):
             speeds_list[i] = vehicle.speed
         return speeds_list
 
+    def var_speed(self) -> float:
+        """
+        :return: speed variance
+        """
+        sp = self.get_speeds()
+        E = np.mean(sp)
+        var = 0
+        for i in range(len(sp)):
+            var += (sp[i] - E)*(sp[i] - E)
+        var = var/len(sp)
+        return(var)
+
 
 
 
