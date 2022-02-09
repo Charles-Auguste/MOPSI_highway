@@ -18,13 +18,13 @@ class IDMVehicle(ControlledVehicle):
     """
 
     # Longitudinal policy parameters
-    ACC_MAX = 6.0  # [m/s2]
+    ACC_MAX = 12  # [m/s2]
     """Maximum acceleration."""
 
     COMFORT_ACC_MAX = 3.0  # [m/s2]
     """Desired maximum acceleration."""
 
-    COMFORT_ACC_MIN = -5.0  # [m/s2]
+    COMFORT_ACC_MIN = -12.0  # [m/s2]
     """Desired maximum deceleration."""
 
     DISTANCE_WANTED = 5.0 + ControlledVehicle.LENGTH  # [m]
@@ -150,7 +150,7 @@ class IDMVehicle(ControlledVehicle):
         if front_vehicle:
             d = ego_vehicle.lane_distance_to(front_vehicle)
             acceleration -= self.COMFORT_ACC_MAX * \
-                np.power(self.desired_gap(ego_vehicle, front_vehicle) / utils.not_zero(d), 2)
+               np.power(self.desired_gap(ego_vehicle, front_vehicle) / utils.not_zero(d), 2)
         return acceleration
 
     def desired_gap(self, ego_vehicle: Vehicle, front_vehicle: Vehicle = None, projected: bool = True) -> float:

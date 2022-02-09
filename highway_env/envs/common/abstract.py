@@ -176,7 +176,7 @@ class AbstractEnv(gym.Env):
         """
         raise NotImplementedError
 
-    def reset(self) -> Observation:
+    def reset(self, config_mopsi = "") -> Observation:
         """
         Reset the environment to it's initial configuration
 
@@ -186,7 +186,7 @@ class AbstractEnv(gym.Env):
         self.define_spaces()  # First, to set the controlled vehicle class depending on action space
         self.time = self.steps = 0
         self.done = False
-        self._reset()
+        self._reset(config_mopsi)
         self.define_spaces()  # Second, to link the obs and actions to the vehicles once the scene is created
         return self.observation_type.observe()
 

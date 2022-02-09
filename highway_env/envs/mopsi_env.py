@@ -53,7 +53,7 @@ class MopsiEnv(AbstractEnv):
             },
             "simulation_frequency": 15,
             "policy_frequency": 5,
-            "duration": 1000,
+            "duration": 500,
             "number_of_lane" : 3,
             "collision_reward": -1,
             "lane_centering_cost": 4,
@@ -70,21 +70,23 @@ class MopsiEnv(AbstractEnv):
 
     def _reward(self, action: np.ndarray) -> float:
         _, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
+        print(_)
+        #print(lateral)
         lane_centering_reward = 1/(1+self.config["lane_centering_cost"]*lateral**2)
         action_reward = self.config["action_reward"]*np.linalg.norm(action)
         reward = lane_centering_reward \
             + action_reward \
             + self.config["collision_reward"] * self.vehicle.crashed
         reward = reward if self.vehicle.on_road else self.config["collision_reward"]
-        return utils.lmap(reward, [self.config["collision_reward"], 1], [0, 1])
+        return utils.lmap(reward, [self.config["collision_reward"], 1], [0, 1]) # map de [-1,1] vers [0,1] => linéaire
 
     def _is_terminal(self) -> bool:
         """The episode is over when a collision occurs or when the access ramp has been passed."""
         return self.vehicle.crashed or self.steps >= self.config["duration"]
 
-    def _reset(self) -> None:
+    def _reset(self, config = "") -> None:
         self._make_road()
-        self._make_vehicles()
+        self._make_vehicles(config)
 
     def _make_road(self) -> None:
 
@@ -92,12 +94,12 @@ class MopsiEnv(AbstractEnv):
         net = RoadNetwork()
 
         # Set Speed Limits for Road Sections - Straight, Turn20, Straight, Turn 15, Turn15, Straight, Turn25x2, Turn18
-        speedlimits = [None, 10, 10, 10, 10, 10, 10]
+        speedlimits = [None, 45, 45, 45, 45, 45, 45]
 
         #===============================================================================================================
         # Straight Lane #1
         if nb_lane == 1:
-            lane1 = StraightLane([-50, 30], [50, 30], line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS), width=5,
+            lane1 = StraightLane([-1, 80], [1, 80], line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS), width=5,
                                  speed_limit=speedlimits[1])
             self.lane1 = lane1
             net.add_lane("ENPC", "ESIEE", lane1)
@@ -117,8 +119,8 @@ class MopsiEnv(AbstractEnv):
                                       speed_limit=speedlimits[1]))
         # ===============================================================================================================
         # 2 - Circular Arc #1
-        center1 = [50, 0]
-        radii1 = 30
+        center1 = [1, 0]
+        radii1 = 80
         if nb_lane == 1:
             net.add_lane("ESIEE", "TV",
                          CircularLane(center1, radii1, np.deg2rad(90), np.deg2rad(-1), width=5, clockwise=False,
@@ -162,7 +164,7 @@ class MopsiEnv(AbstractEnv):
         # 4 - Straight Line #2
         if nb_lane == 1:
             net.add_lane("BOISDELET", "BOULANGERIE",
-                         StraightLane([50, -30], [-50, -30], line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS), width=5,
+                         StraightLane([1, -80], [-1, -80], line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS), width=5,
                                       speed_limit=speedlimits[4]))
         else :
             net.add_lane("BOISDELET", "BOULANGERIE",
@@ -180,8 +182,8 @@ class MopsiEnv(AbstractEnv):
 
         # ===============================================================================================================
         # 5 - Circular Arc #3
-        center3 = [-50, 0]
-        radii3 = 30
+        center3 = [-1, 0]
+        radii3 = 80
         if nb_lane == 1 :
             net.add_lane("BOULANGERIE", "RER",
                          CircularLane(center3, radii3, np.deg2rad(270), np.deg2rad(181), width=5,
@@ -229,7 +231,7 @@ class MopsiEnv(AbstractEnv):
         road = Road(network=net, np_random=self.np_random, record_history=self.config["show_trajectories"])
         self.road = road
 
-    def _make_vehicles(self) -> None:
+    def _make_vehicles(self, type_vehicles) -> None:
         """
         Populate the road with one controlled vehicle and only IDM vehicles driving on a single lane.
         """
@@ -243,9 +245,14 @@ class MopsiEnv(AbstractEnv):
         for i in range(self.config["controlled_vehicles"]):
             lane_index = ("TV", "BOISDELET", rng.randint(nb_lane)) if i == 0 else \
                 self.road.network.random_lane_index(rng)
-            controlled_vehicle = IDMVehicle.make_on_lane(self.road, lane_index,
-                                                      longitudinal= 0. + self.road.network.get_lane(lane_index).length // 2,
-                                                      speed = 5)
+            if type_vehicles == "rl":
+                controlled_vehicle = self.action_type.vehicle_class.make_on_lane(self.road, lane_index, speed=5,
+                                                                             longitudinal=rng.uniform(20, 50))
+            else :
+                controlled_vehicle = IDMVehicle.make_on_lane(self.road, lane_index,
+                                                             longitudinal=0. + self.road.network.get_lane(
+                                                                 lane_index).length // 2,
+                                                             speed=5)
             self.controlled_vehicles.append(controlled_vehicle)
             self.road.vehicles.append(controlled_vehicle)
 
@@ -254,7 +261,7 @@ class MopsiEnv(AbstractEnv):
         #2 Front vehicles
 
         list_of_nodes = ["BOISDELET", "BOULANGERIE", "RER", "ENPC", "ESIEE", "TV"]
-        init_vehicle_dist = 15
+        init_vehicle_dist = 10
         for lane_index in range(nb_lane) :
             vehicle_nb = 0
             for filled_street in range(0,5) :

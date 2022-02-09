@@ -18,7 +18,7 @@ env = gym.make('mopsi-env-v0')
 
 
 env.config["number_of_lane"] = 1
-env.config["other_vehicles"] = 29
+env.config["other_vehicles"] = 35
 env.config["controlled_vehicles"] = 1
 env.reset()
 
@@ -27,11 +27,10 @@ done = False
 hist = []
 while not done:
     obs, reward, done, info = env.step([0,0])
-    print("reward : ",reward)
     env.render()
     hist.append(env.var_speed())
     last_speed = env.get_speeds()
 
-show_var_infos(hist[10:],"traffic_30_vehicles")
+show_var_infos(hist[10:],"traffic_36_vehicles")
 
 
