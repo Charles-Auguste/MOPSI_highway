@@ -199,7 +199,7 @@ class MopsiEnv(AbstractEnv):
         nb_lane = self.config["number_of_lane"]
 
         # ==============================================================================================================
-        #1 Controlled vehicles
+        # 1 Controlled vehicles
 
         self.controlled_vehicles = []
         for i in range(self.config["controlled_vehicles"]):
@@ -218,7 +218,7 @@ class MopsiEnv(AbstractEnv):
 
 
         # ==============================================================================================================
-        #2 Front vehicles
+        # 2 Front vehicles
 
         list_of_nodes = ["ENPC", "TV", "ESIEE", "RER"]
         init_vehicle_dist = 10
