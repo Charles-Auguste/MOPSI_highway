@@ -42,9 +42,9 @@ env = gym.make('mopsi-env-v0')
 # Configuration
 
 env.config["number_of_lane"] = 1
-env.config["other_vehicles"] = 39
+env.config["other_vehicles"] = 19
 env.config["controlled_vehicles"] = 1
-env.config["duration"] = 1000
+env.config["duration"] = 90
 
 
 env.config["screen_width"] = 1000
@@ -62,6 +62,9 @@ if __name__ == "__main__":
     real_nb_vehicles = len(env.road.vehicles)
     print(real_nb_vehicles)
     duration = env.config["duration"]
+
+    if duration < 100:
+        raise SystemError("Simulation must have at least 100it")
 
     # Initialisation du dossier résultats
     time = str(datetime.now().date()) + "___" + str(
