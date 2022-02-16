@@ -63,7 +63,7 @@ class MopsiEnv(AbstractEnv):
             "circle_radius": 80,
             "screen_width": 1500,
             "screen_height": 1000,
-            "centering_position": [0.5, 0.5],
+            "centering_position": [0.5, 0.4],
         })
         return config
 
@@ -145,7 +145,7 @@ class MopsiEnv(AbstractEnv):
         center3 = center1
         radii3 = radius
         if nb_lane == 1 :
-            net.add_lane("ESIEE", "RER",
+            net.add_lane("BOULANGERIE", "RER",
                          CircularLane(center3, radii3, np.deg2rad(270), np.deg2rad(181), width=5,
                                       clockwise=False, line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS),
                                       speed_limit=speedlimits[3]))

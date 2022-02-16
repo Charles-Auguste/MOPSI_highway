@@ -27,7 +27,7 @@ class IDMVehicle(ControlledVehicle):
     COMFORT_ACC_MIN = -12.0  # [m/s2]
     """Desired maximum deceleration."""
 
-    DISTANCE_WANTED = 5.0 + ControlledVehicle.LENGTH  # [m]
+    DISTANCE_WANTED = 10.0 + ControlledVehicle.LENGTH  # [m]
     """Desired jam distance to the front vehicle."""
 
     TIME_WANTED = 1.5  # [s]
@@ -98,6 +98,13 @@ class IDMVehicle(ControlledVehicle):
 
         # Longitudinal: IDM
         front_vehicle, rear_vehicle = self.road.neighbour_vehicles(self, self.lane_index)
+        #################################################################
+        ## ADDITIONAL LINES OF CODES TO THE INITIAL CODE
+        if (not front_vehicle) :
+            next_lane = self.road.network.next_lane(self.lane_index, position = self.position)
+            front_vehicle, rear_vehicle = self.road.neighbour_vehicles(self, next_lane)
+        ## END OF ADDITIONAL LINES
+        #################################################################
         action['acceleration'] = self.acceleration(ego_vehicle=self,
                                                    front_vehicle=front_vehicle,
                                                    rear_vehicle=rear_vehicle)
