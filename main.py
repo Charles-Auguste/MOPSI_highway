@@ -43,17 +43,17 @@ env = gym.make('mopsi-env-v0')
 # Configuration
 
 env.config["number_of_lane"] = 1
-env.config["other_vehicles"] = 0
+env.config["other_vehicles"] = 20
 env.config["controlled_vehicles"] = 1
 env.config["duration"] = 1000
 
 
-env.config["screen_width"] = 1000
-env.config["screen_height"] = 1000
+env.config["screen_width"] = 900
+env.config["screen_height"] = 900
 
 SAVE_SIMULATION = False
 
-env.reset("rl")
+env.reset()
 
 # Main program
 
