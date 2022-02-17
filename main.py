@@ -9,6 +9,7 @@ Date : 15/02:2021
 
 # Standard library
 import os
+import sys
 
 from matplotlib import pyplot as plt
 import pygame
@@ -34,6 +35,8 @@ def show_var_infos(vari,title="swow_var_info", dirpath = None):
     fig,ax = plt.subplots()
     ax.plot(vari)
     ax.set_title("variance evolution from t=0 to t=T")
+    ax.set_xlabel("Time (nb it)")
+    ax.set_ylabel("variance (m/s)")
     if dirpath != None:
         fig.savefig(dirpath+"/"+ title_file +".png")
     plt.show()
@@ -43,15 +46,15 @@ env = gym.make('mopsi-env-v0')
 # Configuration
 
 env.config["number_of_lane"] = 1
-env.config["other_vehicles"] = 20
+env.config["other_vehicles"] = 5
 env.config["controlled_vehicles"] = 1
-env.config["duration"] = 1000
+env.config["duration"] = 500
 
 
-env.config["screen_width"] = 900
-env.config["screen_height"] = 900
+env.config["screen_width"] = 1000
+env.config["screen_height"] = 1000
 
-SAVE_SIMULATION = False
+SAVE_SIMULATION = True
 
 env.reset()
 
@@ -63,10 +66,9 @@ if __name__ == "__main__":
     hist = []
     nb_vehicles = env.config["other_vehicles"] + env.config["controlled_vehicles"]
     real_nb_vehicles = len(env.road.vehicles)
-    print(real_nb_vehicles)
     duration = env.config["duration"]
 
-    if duration < 100:
+    if SAVE_SIMULATION and duration < 100:
         raise SystemError("Simulation must have at least 100it")
 
     # Initialisation du dossier résultats
@@ -86,7 +88,8 @@ if __name__ == "__main__":
 
         # Action
         obs, reward, done, info = env.step([0,0])
-        env.render()
+        if done and i!=duration - 1:
+            sys.exit()
 
         # Gif
         if SAVE_SIMULATION and i>= time_gif and i<=time_gif + duration_gif:
@@ -113,4 +116,4 @@ if __name__ == "__main__":
 
     else :
         show_var_infos(hist[10:], "traffic_" + str(real_nb_vehicles) + "_vehicles" + "__" + str(duration) + "it__",
-                   dirpath=None)
+                   dirpath= None)

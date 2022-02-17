@@ -54,12 +54,12 @@ class MopsiEnv(AbstractEnv):
             "simulation_frequency": 15,
             "policy_frequency": 5,
             "duration": 500,
-            "number_of_lane" : 3,
+            "number_of_lane" : 1,
             "collision_reward": -1,
             "lane_centering_cost": 4,
             "action_reward": -0.3,
             "controlled_vehicles": 1,
-            "other_vehicles": 20,
+            "other_vehicles": 1,
             "circle_radius": 80,
             "screen_width": 1500,
             "screen_height": 1000,
@@ -145,7 +145,7 @@ class MopsiEnv(AbstractEnv):
         center3 = center1
         radii3 = radius
         if nb_lane == 1 :
-            net.add_lane("BOULANGERIE", "RER",
+            net.add_lane("ESIEE", "RER",
                          CircularLane(center3, radii3, np.deg2rad(270), np.deg2rad(181), width=5,
                                       clockwise=False, line_types=(LineType.CONTINUOUS, LineType.CONTINUOUS),
                                       speed_limit=speedlimits[3]))
@@ -221,7 +221,7 @@ class MopsiEnv(AbstractEnv):
         # 2 Front vehicles
 
         list_of_nodes = ["ENPC", "TV", "ESIEE", "RER"]
-        init_vehicle_dist = 10
+        init_vehicle_dist = 9
         for lane_index in range(nb_lane) :
             vehicle_nb = 0
             for filled_street in range(0,5) :
@@ -283,17 +283,14 @@ class MopsiEnv(AbstractEnv):
         """
         :return: speed variance
         """
-        sp = self.get_speeds()
+        sp = self.get_speeds()[1]
+        return(sp)
         E = np.mean(sp)
         var = 0
         for i in range(len(sp)):
             var += (sp[i] - E)*(sp[i] - E)
         var = var/len(sp)
         return(var)
-
-
-
-
 
 
 register(
