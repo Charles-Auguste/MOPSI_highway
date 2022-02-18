@@ -94,7 +94,7 @@ class MopsiEnv(AbstractEnv):
         net = RoadNetwork()
 
         # Set Speed Limits for Road Sections - Straight, Turn20, Straight, Turn 15, Turn15, Straight, Turn25x2, Turn18
-        speedlimits = [None, 20, 20, 20, 20]
+        speedlimits = [None, 20, 20, 5, 20]
 
         # ===============================================================================================================
         # 2 - Circular Arc #1
@@ -283,8 +283,8 @@ class MopsiEnv(AbstractEnv):
         """
         :return: speed variance
         """
-        sp = self.get_speeds()[1]
-        return(sp)
+        sp = self.get_speeds()
+        #return(sp)
         E = np.mean(sp)
         var = 0
         for i in range(len(sp)):

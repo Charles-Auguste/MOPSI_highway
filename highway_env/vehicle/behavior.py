@@ -27,7 +27,7 @@ class IDMVehicle(ControlledVehicle):
     COMFORT_ACC_MIN = -12.0  # [m/s2]
     """Desired maximum deceleration."""
 
-    DISTANCE_WANTED = 10.0 + ControlledVehicle.LENGTH  # [m]
+    DISTANCE_WANTED = 7.0 + ControlledVehicle.LENGTH  # [m]
     """Desired jam distance to the front vehicle."""
 
     TIME_WANTED = 1.5  # [s]
@@ -150,7 +150,7 @@ class IDMVehicle(ControlledVehicle):
         """
         if not ego_vehicle or not isinstance(ego_vehicle, Vehicle):
             return 0
-        ego_target_speed = abs(utils.not_zero(getattr(ego_vehicle, "target_speed", 0)))
+        ego_target_speed = 15#abs(utils.not_zero(getattr(ego_vehicle, "target_speed", 0)))
         acceleration = self.COMFORT_ACC_MAX * (
                 1 - np.power(max(ego_vehicle.speed, 0) / ego_target_speed, self.DELTA))
 

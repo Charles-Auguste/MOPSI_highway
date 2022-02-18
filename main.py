@@ -45,10 +45,10 @@ env = gym.make('mopsi-env-v0')
 
 # Configuration
 
-env.config["number_of_lane"] = 1
-env.config["other_vehicles"] = 5
+env.config["number_of_lane"] = 2
+env.config["other_vehicles"] = 30
 env.config["controlled_vehicles"] = 1
-env.config["duration"] = 500
+env.config["duration"] = 1500
 
 
 env.config["screen_width"] = 1000
@@ -66,6 +66,7 @@ if __name__ == "__main__":
     hist = []
     nb_vehicles = env.config["other_vehicles"] + env.config["controlled_vehicles"]
     real_nb_vehicles = len(env.road.vehicles)
+    print(real_nb_vehicles)
     duration = env.config["duration"]
 
     if SAVE_SIMULATION and duration < 100:
@@ -99,6 +100,7 @@ if __name__ == "__main__":
 
         # Construction des histogrammes
         hist.append(env.var_speed())
+
 
 
     # create gif
