@@ -9,7 +9,7 @@ Date : 15/02:2021
 # Standard library
 import os
 import sys
-
+import numpy as np
 from matplotlib import pyplot as plt
 import pygame
 import gym
@@ -46,15 +46,15 @@ env = gym.make('mopsi-env-v0')
 
 # Configuration
 env.config["number_of_lane"] = 1
-env.config["other_vehicles"] = 30
+env.config["other_vehicles"] = 9
 env.config["controlled_vehicles"] = 1
-env.config["duration"] = 1500
+env.config["duration"] = 700
 
 env.config["screen_width"] = 1000
 env.config["screen_height"] = 1000
 
-# Saving results and datas
-SAVE_SIMULATION = True
+# Saving results and data
+SAVE_SIMULATION = False
 
 # Put "sim" bellow for an IDM simulation
 env.reset("sim")
@@ -76,11 +76,11 @@ if __name__ == "__main__":
     if SAVE_SIMULATION and duration < 100:
         raise SystemError("Simulation must have at least 100it")
 
-    # Initialisation du dossier résultats
-    if SAVE_SIMULATION:
-        time = str(datetime.now().date()) + "___" + str(
+    # Initialisation of results folder
+    time = str(datetime.now().date()) + "___" + str(
         datetime.now().hour) + "_" + str(datetime.now().minute) + "_" + str(datetime.now().second)
-        result_folder_path = "results/Simulation__"+ time
+    result_folder_path = "results/Simulation__" + time
+    if SAVE_SIMULATION:
         os.mkdir(result_folder_path)
 
         time_gif = duration//2
@@ -92,11 +92,11 @@ if __name__ == "__main__":
     for i in tqdm(range(duration)):
 
         # Building renders for the beginning and the end of the simulation
-        if i == 1:
+        if SAVE_SIMULATION and i == 1:
             name_picture = result_folder_path + "/" + "render_begin" + str(i) + ".png"
             plt.imsave(name_picture, env.render(mode="rgb_array"))
 
-        if i == duration - 1:
+        if SAVE_SIMULATION and i == duration - 1:
             name_picture = result_folder_path + "/" + "render_end" + str(i) + ".png"
             plt.imsave(name_picture, env.render(mode="rgb_array"))
 
@@ -107,7 +107,7 @@ if __name__ == "__main__":
             plt.imsave(name_picture, env.render(mode="rgb_array"))
 
         # Failure
-        if done and i!=duration - 1:
+        if SAVE_SIMULATION and done and i!=duration - 1:
             name_picture = result_folder_path + "/" + "render_fail" + str(i) + ".png"
             plt.imsave(name_picture, env.render(mode="rgb_array"))
             sys.exit()

@@ -78,7 +78,7 @@ class MopsiEnv(AbstractEnv):
             + action_reward \
             + self.config["collision_reward"] * self.vehicle.crashed
         reward = reward if self.vehicle.on_road else self.config["collision_reward"]
-        return utils.lmap(reward, [self.config["collision_reward"], 1], [0, 1]) # map de [-1,1] vers [0,1] => linéaire
+        return utils.lmap(reward, [self.config["collision_reward"], 1], [0, 1])
 
 
     def _is_terminal(self) -> bool:
