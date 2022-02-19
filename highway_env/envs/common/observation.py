@@ -644,3 +644,5 @@ def observation_factory(env: 'AbstractEnv', config: dict) -> ObservationType:
         return ExitObservation(env, **config)
     else:
         raise ValueError("Unknown observation type")
+
+

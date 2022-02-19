@@ -41,7 +41,7 @@ env = gym.make('mopsi-env-v0')
 env.config["number_of_lane"] = 1
 env.config["other_vehicles"] = 3
 env.config["controlled_vehicles"] = 1
-env.config["duration"] = 100
+env.config["duration"] = 500
 
 env.config["screen_width"] = 1000
 env.config["screen_height"] = 1000
@@ -58,9 +58,9 @@ done = True
 
 if TRAIN:
     model = PPO("MlpPolicy", env,1e-5,verbose=1, device='cuda')
-    model.learn(total_timesteps=10000)
+    model.learn(total_timesteps=100000)
     model.save("PPO_mopsi_highway")
-    del model # remove to demonstrate saving and loading
+    del model
 
 try :
     model = PPO.load("PPO_mopsi_highway")
@@ -71,7 +71,6 @@ except :
 for i in tqdm(range(env.config["duration"])):
     action, _states = model.predict(obs)
     obs, rewards, done, info = env.step(action)
-    print(obs.shape)
     env.render()
 
 

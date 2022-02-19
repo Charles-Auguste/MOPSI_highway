@@ -39,11 +39,17 @@ class MopsiEnv(AbstractEnv):
         config.update({
             "observation": {
                 "type": "OccupancyGrid",
-                "features": ['presence', 'on_road'],
-                "grid_size": [[-65, 65], [-65, 65]],
-                "grid_step": [3, 3],
-                "as_image": False,
-                "align_to_vehicle_axes": False
+                "vehicles_count": 15,
+                "features": ["presence", "x", "y", "vx", "vy", "cos_h", "sin_h"],
+                "features_range": {
+                "x": [-100, 100],
+                "y": [-100, 100],
+                "vx": [-20, 20],
+                "vy": [-20, 20]
+            },
+            "grid_size": [[-27.5, 27.5], [-27.5, 27.5]],
+            "grid_step": [5, 5],
+            "absolute": False
             },
             "action": {
                 "type": "ContinuousAction",
@@ -66,7 +72,6 @@ class MopsiEnv(AbstractEnv):
             "centering_position": [0.5, 0.5],
         })
         return config
-
 
 
     def _reward(self, action: np.ndarray) -> float:
