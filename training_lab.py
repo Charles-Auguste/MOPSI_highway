@@ -13,8 +13,8 @@ import sys
 from matplotlib import pyplot as plt
 import pygame
 import gym
+from stable_baselines3.common.utils import set_random_seed
 from tqdm import tqdm
-import numpy as np
 
 # Local source
 import highway_env
@@ -22,12 +22,7 @@ import highway_env
 # 3rd party packages
 from datetime import datetime
 import imageio
-
-from stable_baselines3 import HerReplayBuffer, DDPG, DQN, SAC, TD3
-from stable_baselines3.her.goal_selection_strategy import GoalSelectionStrategy
-from stable_baselines3.common.envs import BitFlippingEnv
-from stable_baselines3.common.vec_env import DummyVecEnv
-from stable_baselines3.common.noise import NormalActionNoise
+from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
 
@@ -35,43 +30,57 @@ from stable_baselines3.common.env_util import make_vec_env
 #================== CONFIGURATION AND GLOBAL VARIABLES ===============================
 #=====================================================================================
 
-env = gym.make('mopsi-env-v0')
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
-# Configuration
-env.config["number_of_lane"] = 1
-env.config["other_vehicles"] = 3
-env.config["controlled_vehicles"] = 1
-env.config["duration"] = 500
 
-env.config["screen_width"] = 1000
-env.config["screen_height"] = 1000
+def make_env(env_id, rank, seed=0):
+    """
+    Utility function for multiprocessed env.
 
-# Choose to train or not the agent
-TRAIN = False
+    :param env_id: (str) the environment ID
+    :param num_env: (int) the number of environments you wish to have in subprocesses
+    :param seed: (int) the inital seed for RNG
+    :param rank: (int) index of the subprocess
+    """
+    def _init():
+        env = gym.make(env_id)
+        env.seed(seed + rank)
+        return env
+    set_random_seed(seed)
+    return _init
 
-obs = env.reset()
-done = True
 
 #=====================================================================================
 #============================= MAIN PROGRAM ==========================================
 #=====================================================================================
 
-if TRAIN:
-    model = PPO("MlpPolicy", env,1e-5,verbose=1, device='cuda')
-    model.learn(total_timesteps=100000)
-    model.save("PPO_mopsi_highway")
-    del model
+if __name__ == "__main__":
+    env_id = "mopsi-env-v0"
+    num_cpu = 4  # Number of processes to use
+    # Create the vectorized environment
+    env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
 
-try :
-    model = PPO.load("PPO_mopsi_highway")
-except :
-    print("File not found, try to train the agent before launching again")
-    sys.exit()
-
-for i in tqdm(range(env.config["duration"])):
-    action, _states = model.predict(obs)
-    obs, rewards, done, info = env.step(action)
-    env.render()
+    # Choose to train or not the agent
+    TRAIN = True
+    done = True
 
 
+
+    if TRAIN:
+        model = PPO("MlpPolicy", env,1e-1,verbose=1)
+        model.learn(total_timesteps=1e5)
+        model.save("PPO_mopsi_highway")
+        del model
+
+    try :
+        model = PPO.load("PPO_mopsi_highway")
+    except :
+        print("File not found, try to train the agent before launching again")
+        sys.exit()
+
+    obs = env.reset()
+    for i in tqdm(range(env.config["duration"])):
+        action, _states = model.predict(obs)
+        obs, rewards, done, info = env.step(action)
+        env.render()
 

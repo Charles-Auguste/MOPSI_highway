@@ -65,7 +65,7 @@ class MopsiEnv(AbstractEnv):
             "lane_centering_cost": 4,
             "action_reward": -0.3,
             "controlled_vehicles": 1,
-            "other_vehicles": 0,
+            "other_vehicles": 30,
             "circle_radius": 80,
             "screen_width": 1500,
             "screen_height": 1000,
@@ -76,8 +76,10 @@ class MopsiEnv(AbstractEnv):
 
     def _reward(self, action: np.ndarray) -> float:
 
+
         _, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
         lane_centering_reward = 1/(1+self.config["lane_centering_cost"]*lateral**2)
+        return lane_centering_reward
         action_reward = self.config["action_reward"]*np.linalg.norm(action)
         reward = lane_centering_reward \
             + action_reward \
