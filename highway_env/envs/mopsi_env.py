@@ -39,17 +39,11 @@ class MopsiEnv(AbstractEnv):
         config.update({
             "observation": {
                 "type": "OccupancyGrid",
-                "vehicles_count": 15,
-                "features": ["presence", "x", "y", "vx", "vy", "cos_h", "sin_h"],
-                "features_range": {
-                "x": [-100, 100],
-                "y": [-100, 100],
-                "vx": [-20, 20],
-                "vy": [-20, 20]
-            },
-            "grid_size": [[-27.5, 27.5], [-27.5, 27.5]],
-            "grid_step": [5, 5],
-            "absolute": False
+                "features": ['presence', 'on_road'],
+                "grid_size": [[-18, 18], [-18, 18]],
+                "grid_step": [3, 3],
+                "as_image": True,
+                "align_to_vehicle_axes": False
             },
             "action": {
                 "type": "ContinuousAction",
@@ -59,13 +53,14 @@ class MopsiEnv(AbstractEnv):
             },
             "simulation_frequency": 15,
             "policy_frequency": 5,
-            "duration": 100,
+            "duration": 50,
             "number_of_lane" : 1,
             "collision_reward": -1,
             "lane_centering_cost": 4,
             "action_reward": -0.3,
+            "speed_reward" : 1.0,
             "controlled_vehicles": 1,
-            "other_vehicles": 30,
+            "other_vehicles": 0,
             "circle_radius": 80,
             "screen_width": 1500,
             "screen_height": 1000,
@@ -75,14 +70,13 @@ class MopsiEnv(AbstractEnv):
 
 
     def _reward(self, action: np.ndarray) -> float:
-
-
         _, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
         lane_centering_reward = 1/(1+self.config["lane_centering_cost"]*lateral**2)
-        return lane_centering_reward
         action_reward = self.config["action_reward"]*np.linalg.norm(action)
+        speed_reward = self.config["speed_reward"] * self.road.vehicles[0].speed / 15
         reward = lane_centering_reward \
             + action_reward \
+            + speed_reward  \
             + self.config["collision_reward"] * self.vehicle.crashed
         reward = reward if self.vehicle.on_road else self.config["collision_reward"]
         return utils.lmap(reward, [self.config["collision_reward"], 1], [0, 1])

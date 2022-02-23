@@ -22,6 +22,7 @@ import highway_env
 from datetime import datetime
 import imageio
 
+
 #=====================================================================================
 #============================== FUNCTIONS ============================================
 #=====================================================================================
@@ -48,7 +49,7 @@ env = gym.make('mopsi-env-v0')
 env.config["number_of_lane"] = 1
 env.config["other_vehicles"] = 9
 env.config["controlled_vehicles"] = 1
-env.config["duration"] = 700
+env.config["duration"] = 100
 
 env.config["screen_width"] = 1000
 env.config["screen_height"] = 1000
@@ -58,6 +59,7 @@ SAVE_SIMULATION = False
 
 # Put "sim" bellow for an IDM simulation
 env.reset("sim")
+
 
 #=====================================================================================
 #============================ MAIN PROGRAM ===========================================
