@@ -33,6 +33,13 @@ class MopsiEnv(AbstractEnv):
     Our own environment, built from the racetrack_env.
     """
 
+    def __init__(self,config: dict = None):
+        super().__init__(config)
+        self.action_reward = {"lane_centering" : 0,
+                       "speed_reward" : 0,
+                       "action_reward" : 0,
+                       "reward" : 0}
+
     @classmethod
     def default_config(cls) -> dict:
         config = super().default_config()
@@ -43,7 +50,7 @@ class MopsiEnv(AbstractEnv):
                 "grid_size": [[-18, 18], [-18, 18]],
                 "grid_step": [3, 3],
                 "as_image": True,
-                "align_to_vehicle_axes": False
+                "align_to_vehicle_axes": True
             },
             "action": {
                 "type": "ContinuousAction",
@@ -58,7 +65,8 @@ class MopsiEnv(AbstractEnv):
             "collision_reward": -1,
             "lane_centering_cost": 4,
             "action_reward": -0.3,
-            "speed_reward" : 1.0,
+            "speed_reward" : 2.0,
+            "var_reward" : 1.0,
             "controlled_vehicles": 1,
             "other_vehicles": 0,
             "circle_radius": 80,
@@ -73,20 +81,27 @@ class MopsiEnv(AbstractEnv):
         _, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
         lane_centering_reward = 1/(1+self.config["lane_centering_cost"]*lateral**2)
         action_reward = self.config["action_reward"]*np.linalg.norm(action)
-        speed_reward = self.config["speed_reward"] * self.road.vehicles[0].speed / 15
+        speed_reward = self.config["speed_reward"] * self.road.vehicles[0].speed / 40
         reward = lane_centering_reward \
             + action_reward \
             + speed_reward  \
             + self.config["collision_reward"] * self.vehicle.crashed
         reward = reward if self.vehicle.on_road else self.config["collision_reward"]
-        return utils.lmap(reward, [self.config["collision_reward"], 1], [0, 1])
-
+        self.action_reward["lane_centering"] += lane_centering_reward
+        self.action_reward["speed_reward"] += speed_reward
+        self.action_reward["action_reward"] += action_reward
+        self.action_reward["reward"] += reward
+        return utils.lmap(reward, [self.config["collision_reward"],10], [0, 100])
 
     def _is_terminal(self) -> bool:
         """The episode is over when a collision occurs or when the access ramp has been passed."""
         return self.vehicle.crashed or self.steps >= self.config["duration"]
 
     def _reset(self, config = "rl") -> None:
+        self.action_reward = {"lane_centering": 0,
+                              "speed_reward": 0,
+                              "action_reward": 0,
+                              "reward": 0}
         self._make_road()
         self._make_vehicles(config)
 
@@ -179,7 +194,7 @@ class MopsiEnv(AbstractEnv):
         else:
             net.add_lane("RER", "ENPC",
                          CircularLane(center4, radii4 , np.deg2rad(180), np.deg2rad(90), width=5,
-                                      clockwise=False, line_types=(LineType.STRIPED, LineType.NONE),
+                                      clockwise=False, line_types=(LineType.CONTINUOUS, LineType.NONE),
                                       speed_limit=speedlimits[4]))
             for i in range (nb_lane - 2):
                 net.add_lane("RER", "ENPC",
