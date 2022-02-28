@@ -52,19 +52,19 @@ def make_env(env_id: str, rank: int, seed: int = 0) -> Callable:
 
 
 # Configuration
-num_cpu = 10  # Number of processes to use
+num_cpu = 4  # Number of processes to use
 
-nb_iteration = 1e6 # Number of time steps for learning
+nb_iteration = 2000000 # Number of time steps for learning
 
 learning_rate = 1e-3
 
 debug_info = 1 # 0 for nothing, 1 for minimum, 2 for max
 
-saving_rate = 10000 # Interval between each saves (optimal between 10000 and 100000)
+saving_rate = 100000 # Interval between each saves (optimal between 10000 and 100000)
 
-comment = "" # add a comment to the name of the simulation
+comment = "__test4__" # add a comment to the name of the simulation
 
-load_from = "PPO_mopsi_highway"
+load_from = "model/model__2022-02-26___14_25_26PPO_mopsi_highway___test2__"
 
 
 # Initialisation
@@ -82,7 +82,7 @@ env_id = 'mopsi-env-v0'
 if __name__ == "__main__":
 
     # Create the vectorized environment
-    env = make_vec_env(env_id, n_envs=num_cpu, seed=0)
+    env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
 
     if load_from != "":
         try :

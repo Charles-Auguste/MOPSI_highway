@@ -11,6 +11,8 @@ Date : 15/02:2021
 import os
 import sys
 from datetime import datetime
+import matplotlib.pyplot as plt
+import imageio
 
 import gym
 from stable_baselines3 import PPO
@@ -34,9 +36,9 @@ from mopsi_callback import MopsiCallback_single_core
 
 env_id = 'mopsi-env-v0'
 
-load_from = "model_after_10000"
+load_from = "last_save_state_560000it"
 
-
+SAVE_VIDEO = False
 
 #=====================================================================================
 #============================= MAIN PROGRAM ==========================================
@@ -44,11 +46,16 @@ load_from = "model_after_10000"
 
 if __name__ == "__main__":
 
+    if SAVE_VIDEO:
+        result_folder_path = "modèles_fonctionnels/Jammy_v.02/video"
+        os.mkdir(result_folder_path)
+        filenames = []
+
     env = gym.make(env_id)
 
     # Configuration
     env.config["number_of_lane"] = 1
-    env.config["other_vehicles"] = 0
+    env.config["other_vehicles"] = 5
     env.config["controlled_vehicles"] = 1
     env.config["duration"] = 1000
     env.config["screen_width"] = 1000
@@ -64,5 +71,19 @@ if __name__ == "__main__":
     for i in tqdm(range(env.config["duration"])):
         action, _states = model.predict(obs)
         obs, rewards, done, info = env.step(action)
-        env.render()
+        if not SAVE_VIDEO :
+            env.render()
+        if SAVE_VIDEO:
+            name_picture = result_folder_path + "/" + "render" + str(i) + ".png"
+            filenames.append(name_picture)
+            plt.imsave(name_picture, env.render(mode="rgb_array"))
+
+
+    if SAVE_VIDEO:
+        with imageio.get_writer(result_folder_path + "/results.gif", mode = "I") as writer :
+            for filename in filenames:
+                image = imageio.imread(filename)
+                writer.append_data(image)
+        for filename in set(filenames):
+            os.remove(filename)
 

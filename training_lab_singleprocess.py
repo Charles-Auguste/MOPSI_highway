@@ -53,17 +53,17 @@ def make_env(env_id: str, rank: int, seed: int = 0) -> Callable:
 
 # Configuration
 
-nb_iteration = 1e6 # Number of time steps for learning
+nb_iteration = 1000000 # Number of time steps for learning
 
 learning_rate = 1e-3
 
-debug_info = 1 # 0 for nothing, 1 for minimum, 2 for max
+debug_info = 0  # 0 for nothing, 1 for minimum, 2 for max
 
 saving_rate = 10000 # Interval between each saves (optimal between 10000 and 100000)
 
-comment = "" # add a comment to the name of the simulation
+comment = "__test7__" # add a comment to the name of the simulation
 
-load_from = "PPO_mopsi_highway"
+load_from = "model/model__2022-02-26___20_32_45PPO_mopsi_highway___test5__"
 
 
 # Initialisation

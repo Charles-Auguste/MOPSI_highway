@@ -17,7 +17,8 @@ class MopsiCallback_multi_core(BaseCallback):
             os.makedirs(self.save_path, exist_ok=True)
 
     def _on_step(self) -> bool:
-        if self.n_calls % self.nb_step == 0 :
+        if self.n_calls % self.nb_step == 0:
+            self.save_path = os.path.join(self.log_dir, 'last_save_state_' + str(self.n_calls) + "it")
             self.model.save(self.save_path)
         return True
 
@@ -37,6 +38,7 @@ class MopsiCallback_single_core(BaseCallback):
 
     def _on_step(self) -> bool:
         if self.n_calls % self.nb_step == 0 :
+            self.save_path = os.path.join(self.log_dir, 'last_save_state_' + str(self.n_calls) +"it")
             self.model.save(self.save_path)
         action_dict = self.env.action_reward
         self.logger.record("lane_centering_reward",action_dict["lane_centering"])
