@@ -11,6 +11,7 @@ Date : 15/02:2021
 import os
 import sys
 from datetime import datetime
+import json
 
 import gym
 from stable_baselines3 import PPO
@@ -53,17 +54,17 @@ def make_env(env_id: str, rank: int, seed: int = 0) -> Callable:
 
 # Configuration
 
-nb_iteration = 1000000 # Number of time steps for learning
+nb_iteration = 5000 # Number of time steps for learning
 
 learning_rate = 1e-3
 
 debug_info = 0  # 0 for nothing, 1 for minimum, 2 for max
 
-saving_rate = 10000 # Interval between each saves (optimal between 10000 and 100000)
+saving_rate = 100 # Interval between each saves (optimal between 10000 and 100000)
 
-comment = "__test7__" # add a comment to the name of the simulation
+comment = "" # add a comment to the name of the simulation
 
-load_from = "model/model__2022-02-26___20_32_45PPO_mopsi_highway___test5__"
+load_from = ""
 
 
 # Initialisation
@@ -94,6 +95,8 @@ if __name__ == "__main__":
         model = PPO("MlpPolicy", env, learning_rate, verbose=debug_info, tensorboard_log="ppo_mopsi_tensorboard/")
     M_callback = MopsiCallback_single_core(nb_step=saving_rate, log_dir=saving_path, env = env)
     model.learn(total_timesteps = nb_iteration, tb_log_name="mopsi_run_"+time+comment, callback = M_callback)
-    model.save(saving_path +"PPO_mopsi_highway_"+comment)
+    model.save(saving_path +"/PPO_mopsi_highway_"+comment)
+    with open(saving_path+'/obs.json', 'w') as fp:
+        json.dump(env.config, fp)
     del model
 

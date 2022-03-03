@@ -46,16 +46,16 @@ env = gym.make('mopsi-env-v0')
 #=====================================================================================
 
 # Configuration
-env.config["number_of_lane"] = 1
-env.config["other_vehicles"] = 0
+env.config["number_of_lane"] = 2
+env.config["other_vehicles"] = 10
 env.config["controlled_vehicles"] = 1
 env.config["duration"] = 100
-env.config["circle_radius"] = 40
+env.config["circle_radius"] = 20
 
 env.config["screen_width"] = 1000
 env.config["screen_height"] = 1000
 
-env.reset()
+env.reset("sim")
 
 #=====================================================================================
 #============================ MAIN PROGRAM ===========================================
@@ -64,16 +64,16 @@ env.reset()
 if __name__ == "__main__":
 
     # Main Loop
+    plt.ion()
+    fig, ax_lst = plt.subplots()
     for i in range(env.config["duration"]):
-
         # Action
-        obs, reward, done, info = env.step([0.01,0])
-        print(env.road.vehicles[0].speed)
-        if i % 10 == 0 :
-            print("obs",obs)
-            print("reward", reward)
-            print("info",info)
-            env.render()
+        obs, reward, done, info = env.step([0,0])
+        road = np.array(obs[3], dtype= np.uint16)
+        presence = np.array(obs[0], dtype=np.uint16)
+        ax_lst.imshow(presence+road, vmin=0, vmax=1000)
+        fig.canvas.draw()
+        fig.canvas.flush_events()
 
 
 

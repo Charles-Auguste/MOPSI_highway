@@ -620,6 +620,32 @@ class LidarObservation(ObservationType):
     def index_to_direction(self, index: int) -> np.ndarray:
         return np.array([np.cos(index * self.angle), np.sin(index * self.angle)])
 
+class MopsiObservation(ObservationType):
+    """A custom observation class for the mopsi project"""
+    def __init__(self,env : 'AbstractEnv',
+                 features: Optional[List[str]] = None,
+                 grid_size: Optional[Tuple[Tuple[float, float], Tuple[float, float]]] = None,
+                 grid_step: Optional[Tuple[float, float]] = None,
+                 vehicles_count: int = 5,
+                 features_range: Dict[str, List[float]] = None,
+                 absolute: bool = False,
+                 order: str = "sorted",
+                 normalize: bool = True,
+                 clip: bool = True,
+                 see_behind: bool = False,
+                 observe_intentions: bool = False) -> None :
+        super().__init__(env)
+        self.features = features
+        self.grid_size = grid_size
+        self.grid_step = grid_step
+
+
+    def space(self) -> spaces.Space:
+        return spaces.Box(shape=self.grid.shape, low=-np.inf, high=np.inf, dtype=np.float32)
+
+
+
+
 
 def observation_factory(env: 'AbstractEnv', config: dict) -> ObservationType:
     if config["type"] == "TimeToCollision":
@@ -642,6 +668,8 @@ def observation_factory(env: 'AbstractEnv', config: dict) -> ObservationType:
         return LidarObservation(env, **config)
     elif config["type"] == "ExitObservation":
         return ExitObservation(env, **config)
+    elif config["type"] == "MopsiObservation":
+        return MopsiObservation(env, **config)
     else:
         raise ValueError("Unknown observation type")
 

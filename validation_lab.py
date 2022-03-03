@@ -36,7 +36,8 @@ from mopsi_callback import MopsiCallback_single_core
 
 env_id = 'mopsi-env-v0'
 
-load_from = "last_save_state_560000it"
+#load_from = "model_jamy_ppo"
+load_from = "modèles_fonctionnels/Jammy_v.02/model_jamy_ppo"
 
 SAVE_VIDEO = False
 
@@ -47,16 +48,17 @@ SAVE_VIDEO = False
 if __name__ == "__main__":
 
     if SAVE_VIDEO:
-        result_folder_path = "modèles_fonctionnels/Jammy_v.02/video"
+        result_folder_path = "results/model_results/video"
         os.mkdir(result_folder_path)
         filenames = []
 
     env = gym.make(env_id)
 
     # Configuration
-    env.config["number_of_lane"] = 1
-    env.config["other_vehicles"] = 5
-    env.config["controlled_vehicles"] = 1
+    env.config["number_of_lane"] = 2
+    env.config["other_vehicles"] = 0
+    env.config["circle_radius"] = 80
+    env.config["controlled_vehicles"] = 4
     env.config["duration"] = 1000
     env.config["screen_width"] = 1000
     env.config["screen_height"] = 1000
