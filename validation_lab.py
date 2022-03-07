@@ -37,7 +37,7 @@ from mopsi_callback import MopsiCallback_single_core
 env_id = 'mopsi-env-v0'
 
 #load_from = "model_jamy_ppo"
-load_from = "modèles_fonctionnels/Jammy_v.02/model_jamy_ppo"
+load_from = "model/model__2022-03-04___12_10_46/last_save_state/model_1000000it"
 
 SAVE_VIDEO = False
 
@@ -55,10 +55,10 @@ if __name__ == "__main__":
     env = gym.make(env_id)
 
     # Configuration
-    env.config["number_of_lane"] = 2
+    env.config["number_of_lane"] = 3
     env.config["other_vehicles"] = 0
-    env.config["circle_radius"] = 80
-    env.config["controlled_vehicles"] = 4
+    env.config["circle_radius"] = 60
+    env.config["controlled_vehicles"] = 1
     env.config["duration"] = 1000
     env.config["screen_width"] = 1000
     env.config["screen_height"] = 1000

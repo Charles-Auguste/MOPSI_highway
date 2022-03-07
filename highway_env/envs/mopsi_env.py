@@ -47,9 +47,8 @@ class MopsiEnv(AbstractEnv):
             "observation": {
                 "type": "OccupancyGrid",
                 "features": ['presence','vx','vy','on_road'],
-                "grid_size": [[-18, 18], [-18, 18]],
-                "grid_step": [1, 1],
-                "as_image": True,
+                "grid_size": [[-6, 6], [0, 18]],
+                "grid_step": [1, 3],
                 "align_to_vehicle_axes": True
             },
             "action": {
@@ -61,13 +60,13 @@ class MopsiEnv(AbstractEnv):
             "simulation_frequency": 15,
             "policy_frequency": 5,
             "duration": 50,
-            "number_of_lane" : 1,
+            "number_of_lane" : 3,
             "collision_reward": -5,
             "lane_centering_cost": 4,
             "action_reward": -0.3,
             "controlled_vehicles": 1,
             "other_vehicles": 0,
-            "circle_radius": 100,
+            "circle_radius": 80,
             "screen_width": 1500,
             "screen_height": 1000,
             "centering_position": [0.5, 0.5],
@@ -79,15 +78,18 @@ class MopsiEnv(AbstractEnv):
 
 
     def _reward(self, action: np.ndarray) -> float:
+        # lane centering reward
         _, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
         lane_centering_reward = self.config["lane_centering_coeff"]/(1+self.config["lane_centering_cost"]*lateral**2)
+        # action
         action_reward = self.config["action_coeff"] * self.config["action_reward"]*np.linalg.norm(action)
+        # speed
         speed_reward = self.config["speed_coeff"] * self.road.vehicles[0].speed / 20
+        #reward
         reward = lane_centering_reward \
             + action_reward \
-            + speed_reward  \
-            + self.config["collision_reward"] * self.vehicle.crashed
-        reward = reward if self.vehicle.on_road else self.config["collision_reward"]
+            + speed_reward
+        reward = reward if (self.vehicle.on_road or self.vehicle.crashed) else self.config["collision_reward"]
         self.action_reward["lane_centering"] = lane_centering_reward
         self.action_reward["speed_reward"] = speed_reward
         self.action_reward["action_reward"] = action_reward

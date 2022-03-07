@@ -54,15 +54,15 @@ def make_env(env_id: str, rank: int, seed: int = 0) -> Callable:
 
 # Configuration
 
-nb_iteration = 5000 # Number of time steps for learning
+nb_iteration = 2000000 # Number of time steps for learning
 
 learning_rate = 1e-3
 
 debug_info = 0  # 0 for nothing, 1 for minimum, 2 for max
 
-saving_rate = 100 # Interval between each saves (optimal between 10000 and 100000)
+saving_rate = 100000 # Interval between each saves (optimal between 10000 and 100000)
 
-comment = "" # add a comment to the name of the simulation
+comment = "GCA_1" # add a comment to the name of the simulation
 
 load_from = ""
 

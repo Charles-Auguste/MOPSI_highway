@@ -46,11 +46,11 @@ env = gym.make('mopsi-env-v0')
 #=====================================================================================
 
 # Configuration
-env.config["number_of_lane"] = 2
-env.config["other_vehicles"] = 10
+env.config["number_of_lane"] = 1
+env.config["other_vehicles"] = 0
 env.config["controlled_vehicles"] = 1
 env.config["duration"] = 100
-env.config["circle_radius"] = 20
+env.config["circle_radius"] = 100
 
 env.config["screen_width"] = 1000
 env.config["screen_height"] = 1000
@@ -74,6 +74,7 @@ if __name__ == "__main__":
         ax_lst.imshow(presence+road, vmin=0, vmax=1000)
         fig.canvas.draw()
         fig.canvas.flush_events()
+        env.render()
 
 
 

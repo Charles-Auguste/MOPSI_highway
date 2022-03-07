@@ -47,9 +47,9 @@ env = gym.make('mopsi-env-v0')
 
 # Configuration
 env.config["number_of_lane"] = 1
-env.config["other_vehicles"] = 9
+env.config["other_vehicles"] = 0
 env.config["controlled_vehicles"] = 1
-env.config["duration"] = 100
+env.config["duration"] = 1000
 
 env.config["screen_width"] = 1000
 env.config["screen_height"] = 1000
@@ -58,7 +58,8 @@ env.config["screen_height"] = 1000
 SAVE_SIMULATION = False
 
 # Put "sim" bellow for an IDM simulation
-env.reset("sim")
+env.reset()
+#env.reset("sim")
 
 
 #=====================================================================================
@@ -116,6 +117,7 @@ if __name__ == "__main__":
 
         # Action
         obs, reward, done, info = env.step([0,0])
+        env.render()
 
         # Histogram
         hist.append(env.var_speed())
