@@ -36,9 +36,9 @@ class MopsiEnv(AbstractEnv):
     def __init__(self,config: dict = None):
         super().__init__(config)
         self.action_reward = {"lane_centering" : 0,
-                       "speed_reward" : 0,
-                       "action_reward" : 0,
-                       "reward" : 0}
+                        "speed_reward" : 0,
+                        "action_reward" : 0,
+                        "reward" : 0}
 
     @classmethod
     def default_config(cls) -> dict:
@@ -58,7 +58,7 @@ class MopsiEnv(AbstractEnv):
             "action": {
                 "type": "ContinuousAction",
                 "longitudinal": True,
-                "lateral": True,
+                "lateral": False,
                 "target_speeds": [0, 5, 10]
             },
             "simulation_frequency": 15,
@@ -67,15 +67,15 @@ class MopsiEnv(AbstractEnv):
             "number_of_lane" : 1,
             "collision_reward": -5,
             "lane_centering_cost": 4,
-            "action_reward": -0.3,
+            "action_reward": -5,
             "controlled_vehicles": 1,
-            "other_vehicles": 0,
-            "circle_radius": 80,
+            "other_vehicles": 5,
+            "circle_radius": 100,
             "screen_width": 1500,
             "screen_height": 1000,
             "centering_position": [0.5, 0.5],
             "lane_centering_coeff" : 5.0,
-            "action_coeff" : 1.0,
+            "action_coeff" : 0.,
             "speed_coeff" : 5.0
         })
         return config
@@ -84,22 +84,22 @@ class MopsiEnv(AbstractEnv):
     def _reward(self, action: np.ndarray) -> float:
         # lane centering reward
         _, lateral = self.vehicle.lane.local_coordinates(self.vehicle.position)
-        lane_centering_reward = self.config["lane_centering_coeff"]/(1+self.config["lane_centering_cost"]*lateral**2)
+        #lane_centering_reward = self.config["lane_centering_coeff"]/(1+self.config["lane_centering_cost"]*lateral**2)
         # action
         action_reward = self.config["action_coeff"] * self.config["action_reward"]*np.linalg.norm(action)
         # speed
         speed_reward = self.config["speed_coeff"] / (1+abs(
             self.road.vehicles[0].speed - self.config["action"]["target_speeds"][-1]))
         #reward
-        reward = lane_centering_reward \
-            + action_reward \
+        reward = action_reward \
             + speed_reward
-        reward = reward if (self.vehicle.on_road or self.vehicle.crashed) else self.config["collision_reward"]
-        self.action_reward["lane_centering"] = lane_centering_reward
+       # + lane_centering_reward \
+        reward = reward if not self.vehicle.crashed else self.config["collision_reward"]
+        #self.action_reward["lane_centering"] = lane_centering_reward
         self.action_reward["speed_reward"] = speed_reward
         self.action_reward["action_reward"] = action_reward
         self.action_reward["reward"] = reward
-        return utils.lmap(reward, [self.config["collision_reward"],self.config["speed_coeff"]+self.config["lane_centering_coeff"]], [0, 10])
+        return utils.lmap(reward, [self.config["collision_reward"],self.config["speed_coeff"]], [0, 10])
 
     def _is_terminal(self) -> bool:
         """The episode is over when a collision occurs or when the access ramp has been passed."""

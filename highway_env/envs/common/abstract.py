@@ -232,6 +232,7 @@ class AbstractEnv(gym.Env):
             if action is not None \
                     and not self.config["manual_control"] \
                     and self.time % int(self.config["simulation_frequency"] // self.config["policy_frequency"]) == 0:
+               # print(action)
                 self.action_type.act(action)
 
             self.road.act()

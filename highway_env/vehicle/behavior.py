@@ -89,6 +89,7 @@ class IDMVehicle(ControlledVehicle):
         if self.crashed:
             return
         action = {}
+
         # Lateral: MOBIL
         self.follow_road()
         if self.enable_lane_change:

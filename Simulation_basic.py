@@ -2,6 +2,9 @@
     MOPSI Project
 RL and autonomous vehicles
 
+Simulations with no trained agents.
+The simulations are rendered as gif and stored in the results' folder.
+
 Authors : Even Matencio - Charles.A Gourio
 Date : 15/02:2021
 """
@@ -50,6 +53,7 @@ env.config["number_of_lane"] = 1
 env.config["other_vehicles"] = 0
 env.config["controlled_vehicles"] = 1
 env.config["duration"] = 1000
+env.config["circle_radius"] = 60
 
 env.config["screen_width"] = 1000
 env.config["screen_height"] = 1000
@@ -116,7 +120,7 @@ if __name__ == "__main__":
             sys.exit()
 
         # Action
-        obs, reward, done, info = env.step([0,0])
+        obs, reward, done, info = env.step([1, 0])
         env.render()
 
         # Histogram

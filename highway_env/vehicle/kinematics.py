@@ -126,6 +126,7 @@ class Vehicle(RoadObject):
             self.impact = None
         self.heading += self.speed * np.sin(beta) / (self.LENGTH / 2) * dt
         self.speed += self.action['acceleration'] * dt
+        print(self.action["acceleration"])
         self.speed = max(0, self.speed)
         self.on_state_update()
 

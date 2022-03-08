@@ -2,6 +2,11 @@
     MOPSI Project
 RL and autonomous vehicles
 
+This lab is made for testing agents that were previously trained.
+The simulation must be done with the observation' parameters that were used for training.
+
+The result can be rendered as a video.
+
 Authors : Even Matencio - Charles.A Gourio
 Date : 15/02:2021
 """
@@ -37,7 +42,7 @@ from mopsi_callback import MopsiCallback_single_core
 env_id = 'mopsi-env-v0'
 
 #load_from = "model_jamy_ppo"
-load_from = "model/model__2022-03-08___8_42_49/last_save_state/model_60000it"
+load_from = "model/model__2022-03-05___16_10_3/PPO_mopsi_highway_from_Jammy_v02"
 
 SAVE_VIDEO = False
 
@@ -56,8 +61,10 @@ if __name__ == "__main__":
 
     # Configuration
     env.config["number_of_lane"] = 1
-    env.config["other_vehicles"] = 0
-    env.config["circle_radius"] = 50
+    env.config["other_vehicles"] = 1
+    env.config["grid_step"] = [3, 3]
+    env.config["grid_size"] = [[-18, 18], [-18, 18]]
+    env.config["circle_radius"] = 60
     env.config["controlled_vehicles"] = 1
     env.config["duration"] = 1000
     env.config["screen_width"] = 1000

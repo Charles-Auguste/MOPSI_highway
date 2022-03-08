@@ -2,6 +2,12 @@
     MOPSI Project
 RL and autonomous vehicles
 
+This lab is made for quick simulations, with no trained agents.
+
+Its main interest is that the simulation is rendered as seen by the only
+(IDM) ego-vehicle, so that we truly understand what are the observations
+provided to the ego-vehicle.
+
 Authors : Even Matencio - Charles.A Gourio
 Date : 15/02:2021
 """
@@ -47,7 +53,7 @@ env = gym.make('mopsi-env-v0')
 
 # Configuration
 env.config["number_of_lane"] = 1
-env.config["other_vehicles"] = 0
+env.config["other_vehicles"] = 10
 env.config["controlled_vehicles"] = 1
 env.config["duration"] = 100
 env.config["circle_radius"] = 200
@@ -55,6 +61,7 @@ env.config["circle_radius"] = 200
 env.config["screen_width"] = 1000
 env.config["screen_height"] = 1000
 
+# There is no trained agent in the simulation
 env.reset("sim")
 
 #=====================================================================================

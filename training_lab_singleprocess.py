@@ -2,6 +2,11 @@
     MOPSI Project
 RL and autonomous vehicles
 
+This lab is made for training rl agent.
+It stores the trained model on the folder model.
+
+It can be used to train agent that were already trained.
+
 Authors : Even Matencio - Charles.A Gourio
 Date : 15/02:2021
 """
@@ -54,15 +59,15 @@ def make_env(env_id: str, rank: int, seed: int = 0) -> Callable:
 
 # Configuration
 
-nb_iteration = 500000 # Number of time steps for learning
+nb_iteration = 1000000 # Number of time steps for learning
 
 learning_rate = 1e-3
 
 debug_info = 0  # 0 for nothing, 1 for minimum, 2 for max
 
-saving_rate = 20000 # Interval between each saves (optimal between 10000 and 100000)
+saving_rate = 100000 # Interval between each saves (optimal between 10000 and 100000)
 
-comment = "_GCA_4_" # add a comment to the name of the simulation
+comment = "" # add a comment to the name of the simulation
 
 load_from = ""
 
@@ -83,6 +88,11 @@ if __name__ == "__main__":
 
     # Create the vectorized environment
     env = gym.make(env_id)
+    env.config["number_of_lane"] = 1
+    env.config["other_vehicles"] = 0
+    env.config["controlled_vehicles"] = 1
+    env.config["circle_radius"] = 90
+    env.config["duration"] = 1000
 
     if load_from != "":
         try :
