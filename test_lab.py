@@ -50,7 +50,7 @@ env.config["number_of_lane"] = 1
 env.config["other_vehicles"] = 0
 env.config["controlled_vehicles"] = 1
 env.config["duration"] = 100
-env.config["circle_radius"] = 100
+env.config["circle_radius"] = 200
 
 env.config["screen_width"] = 1000
 env.config["screen_height"] = 1000
@@ -69,12 +69,11 @@ if __name__ == "__main__":
     for i in range(env.config["duration"]):
         # Action
         obs, reward, done, info = env.step([0,0])
-        road = np.array(obs[3], dtype= np.uint16)
-        presence = np.array(obs[0], dtype=np.uint16)
-        ax_lst.imshow(presence+road, vmin=0, vmax=1000)
+        road = np.array(obs[3])
+        presence = np.array(obs[0])
+        ax_lst.imshow(presence+road)
         fig.canvas.draw()
         fig.canvas.flush_events()
-        env.render()
 
 
 

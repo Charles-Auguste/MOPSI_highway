@@ -47,9 +47,13 @@ class MopsiEnv(AbstractEnv):
             "observation": {
                 "type": "OccupancyGrid",
                 "features": ['presence','vx','vy','on_road'],
-                "grid_size": [[-6, 6], [0, 18]],
-                "grid_step": [1, 3],
-                "align_to_vehicle_axes": True
+                "grid_size": [[0, 18], [-6, 6]],
+                "grid_step": [3, 1],
+                "align_to_vehicle_axes": True,
+                "features_range": {
+                    "vx": [0, 20],
+                    "vy": [0, 20]
+                },
             },
             "action": {
                 "type": "ContinuousAction",
@@ -59,8 +63,8 @@ class MopsiEnv(AbstractEnv):
             },
             "simulation_frequency": 15,
             "policy_frequency": 5,
-            "duration": 50,
-            "number_of_lane" : 3,
+            "duration": 100,
+            "number_of_lane" : 1,
             "collision_reward": -5,
             "lane_centering_cost": 4,
             "action_reward": -0.3,
@@ -70,7 +74,7 @@ class MopsiEnv(AbstractEnv):
             "screen_width": 1500,
             "screen_height": 1000,
             "centering_position": [0.5, 0.5],
-            "lane_centering_coeff" : 2.0,
+            "lane_centering_coeff" : 5.0,
             "action_coeff" : 1.0,
             "speed_coeff" : 5.0
         })
@@ -84,7 +88,8 @@ class MopsiEnv(AbstractEnv):
         # action
         action_reward = self.config["action_coeff"] * self.config["action_reward"]*np.linalg.norm(action)
         # speed
-        speed_reward = self.config["speed_coeff"] * self.road.vehicles[0].speed / 20
+        speed_reward = self.config["speed_coeff"] / (1+abs(
+            self.road.vehicles[0].speed - self.config["action"]["target_speeds"][-1]))
         #reward
         reward = lane_centering_reward \
             + action_reward \
