@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="Ressources/bootstrap-5.1.1-dist/css/bootstrap.css">
+	<link rel="stylesheet" href="Ressources/font-awesome-4.7.0/css/font-awesome.css"  >
+	<link rel="stylesheet" href="style-header.css">
+	<link rel="stylesheet" href="style-footer.css">
+	<link rel="stylesheet" href="style.css">
+	<link href="./apple-touch-icon.png" rel ="apple-touche-icône">
+	<link rel="icon" type="image/png" href="apple-touch-icon.png">
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=no">
+	<title>MOPSI-RL</title>
+
+</head>
+<body>
+	<header>
+		<div class="container header-head">
+	<div class="container header-head-grey" >
+		<div class="row justify-content-start">
+			<div class="container header-cercle col-3">
+				<img src="logo_enpc.png" width="130" alt="logo de l'ENPC" class="header-image-logo">
+			</div>
+			<div class="container title col-6">
+				<p>Projet MOPSI<p>
+			</div>
+		</div>
+	</div>
+	<div class="container-fl header-ligne-separ"></div> 
+	</div>
+	<div class="container-fl header-ligne-separ"></div> 
+	</header>
+
+
+<!-- =================================================================== -->
+<!-- =================================================================== -->
+<!-- Articles de notre page -->
+<!-- =================================================================== -->
+<!-- =================================================================== -->
+
+<!-- Type 1 : Avec une image -->
+	<!-- on ouvre un div "article" -->
+	<div class="container article" id="d2">
+	<!-- on ouvre une balise article-->
+	<article>
+	<!-- br = saut de ligne -->
+	<br>
+	<!-- titre -->
+	<h2>Apprentissage par renforcement pour les véhicules autonomes</h2>
+	<!-- texte -->
+	<p>Cette page répertorie les résultats que nous avons obtenus à la suite des différents entrainements de notre agent.</p>
+	<!-- image -->
+	<img src="jam.jpg" class="img-travaux">
+	<!-- on ferme la balise article -->
+	</article>
+	<br><br>
+	<div class="container-fl header-ligne-separ"></div> 
+	<!-- on ferme le div -->
+	</div>
+
+<!-- =================================================================== -->
+<!-- =================================================================== -->
+
+<!-- Type 2 : Avec une vidéo -->
+	<!-- on ouvre un div "article" -->
+	<div class="container article" id="d2">
+	<!-- on ouvre une balise article-->
+	<article>
+	<!-- br = saut de ligne -->
+	<br>
+	<!-- titre -->
+	<h4>Entrainement d'un véhicule sur une route simple</h4>
+	<!-- texte -->
+	<p>Dans cette situation, on entraine notre agent sur une route sans véhicules à une voie. Son reward est construit en suivant les points suivants : <br> - Vitesse (++) <br> - Accélération (-) <br> - véhicule centré (--) <br> - sortie de route (---)</p>
+	<!-- vidéo -->
+	<video class = "img-travaux" controls>
+      <source src="trafic1.mp4" type=video/mp4>
+    </video>
+	<!-- on ferme la balise article -->
+	</article>
+	<br><br>
+	<div class="container-fl header-ligne-separ"></div> 
+	<!-- on ferme le div -->
+	</div>
+
+
+
+
+
+
+
+
+<!-- =================================================================== -->
+<!-- =================================================================== -->
+<!-- =================================================================== -->
+<!-- =================================================================== -->
+
+	<footer>
+		<div class="container-fl footer-gris text-center"></div>
+		<div class="container-fl header-ligne-separ"></div> 
+			<div class="container-fl footer-contenant-texte-logo">
+				<div class = "footer-text"><p>ENPC - 2021/2022</p></div>
+			</div>
+	</footer>
+</body>
+</html>

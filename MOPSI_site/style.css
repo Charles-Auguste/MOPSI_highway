@@ -1,0 +1,45 @@
+footer{
+
+width:100%;
+
+padding-top:50px;
+
+
+}
+
+#d2{
+	display: block;
+}
+
+
+@media (min-width: 501px) {
+
+.img-travaux{
+	width:100%;
+}
+
+.article {
+	width: 900px;
+	margin: auto;
+}
+
+article {
+	border-bottom: 2px solid black;
+}
+
+}
+
+@media (max-width: 500px) {
+
+
+.img-travaux{
+	width: 100%;
+}
+
+.article {
+	width: 100%;
+	justify-content: center;
+}
+
+
+}

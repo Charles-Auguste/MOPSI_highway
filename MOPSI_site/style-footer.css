@@ -1,0 +1,45 @@
+
+.footer-text{
+	margin-top: 10px;
+	font-size: 15px;
+	text-align: center;
+	color: #1b1b1b;
+	font-weight: bolder;
+
+}
+
+.footer-log{
+	font-size: 25px!important;
+	margin-top: 15px;
+}
+
+
+.footer-contenant-texte-logo{
+	background-color: white;
+	height: 70px;
+}
+
+.footer-logo{
+	width: 70px;
+	height: 70px;
+}
+
+.footer-logo-row{
+	max-width: 400px;
+	margin:auto;
+}
+
+
+.footer-gris{
+	height: 30px;
+	background-color: #0089AB ;
+	width:100%;
+}
+
+
+
+
+
+
+
+
