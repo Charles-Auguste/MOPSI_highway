@@ -23,9 +23,7 @@ padding-top:50px;
 	margin: auto;
 }
 
-article {
-	border-bottom: 2px solid black;
-}
+
 
 }
 
@@ -41,5 +39,8 @@ article {
 	justify-content: center;
 }
 
+.h1{
+text-align : center;
+}
 
 }
